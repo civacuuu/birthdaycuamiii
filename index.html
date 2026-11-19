@@ -674,6 +674,12 @@ p{font-size:16px}
 .photo small{font-size:12px}
 .music{right:18px;top:16px}
 }
+.countdown-date {
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+}
 </style>
 </head>
 
@@ -756,6 +762,9 @@ because I have a few little things to tell you.
     <div><span id="cd-seconds">00</span><small>SECONDS</small></div>
   </div>
   <div class="countdown-note">Every second brings us closer to your day ♡</div>
+<div class="countdown-date">
+  24 November 2026 · 00:00 WIB
+</div>
 </div>
 
 <div class="nav">
@@ -1023,6 +1032,10 @@ I love you, always.
 
 </div>
 
+<button class="btn primary" id="againBtn">
+  Read Again ♡
+</button>
+   
 </div>
 </section>
 
@@ -1088,6 +1101,10 @@ function showPage(index){
     page.classList.toggle('active',i === index);
   });
 
+document.getElementById('againBtn').addEventListener('click', () => {
+  showPage(0);
+});
+   
   dots.forEach((dot,i)=>{
     dot.classList.toggle('on',i === index);
   });
