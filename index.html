@@ -964,11 +964,12 @@ I love you, always.
 
 <script>
 
+
 // ============================
 // MUSIC
 // ============================
 
-const birthdayMusic = new Audio('music.mp3');
+const birthdayMusic = new Audio('./music.mp3');
 birthdayMusic.loop = true;
 birthdayMusic.preload = 'auto';
 
@@ -978,118 +979,98 @@ const musicBtn = document.getElementById('musicBtn');
 
 async function startMusic(){
 
-try{
+  try {
+    await birthdayMusic.play();
+    isPlaying = true;
+    musicBtn.textContent = '♫ Music playing';
+  } catch(error) {
+    isPlaying = false;
+    musicBtn.textContent = '♫ Play music';
 
-await birthdayMusic.play();
-
-isPlaying = true;
-musicBtn.textContent = '♫ Music playing';
-
-}catch(error){
-
-isPlaying = false;
-musicBtn.textContent = '♫ Play music';
-
-alert('Musik belum bisa diputar. Pastikan file music.mp3 sudah diunggah ke GitHub.');
+    alert('Musik belum bisa diputar. Periksa file music.mp3 di GitHub.');
+  }
 
 }
 
-}
+musicBtn.addEventListener('click', async()=>{
 
-musicBtn.addEventListener('click',async()=>{
-
-if(isPlaying){
-
-birthdayMusic.pause();
-isPlaying = false;
-musicBtn.textContent = '♫ Play music';
-
-}else{
-
-await startMusic();
-
-}
+  if(isPlaying){
+    birthdayMusic.pause();
+    isPlaying = false;
+    musicBtn.textContent = '♫ Play music';
+  } else {
+    await startMusic();
+  }
 
 });
+
 
 // ============================
 // PAGE NAVIGATION
 // ============================
 
 const pages = [...document.querySelectorAll('.page')];
-
 const dots = [...document.querySelectorAll('.progress .dot')];
 
 let currentPage = 0;
 
 function showPage(index){
 
-if(index < 0 || index >= pages.length)return;
+  if(index < 0 || index >= pages.length) return;
 
-currentPage = index;
+  currentPage = index;
 
-pages.forEach((page,i)=>{
+  pages.forEach((page,i)=>{
+    page.classList.toggle('active',i === index);
+  });
 
-page.classList.toggle('active',i === currentPage);
+  dots.forEach((dot,i)=>{
+    dot.classList.toggle('on',i === index);
+  });
 
-});
+  window.scrollTo({
+    top:0,
+    behavior:'smooth'
+  });
 
-dots.forEach((dot,i)=>{
-
-dot.classList.toggle('on',i === currentPage);
-
-});
-
-window.scrollTo({
-top:0,
-behavior:'smooth'
-});
+  // Balon hanya muncul di halaman terakhir
+  if(index === 6){
+    showBalloons();
+  }
 
 }
 
-// Tombol halaman berikutnya
-
 document.querySelectorAll('.next').forEach(button=>{
 
-button.addEventListener('click',()=>{
-
-showPage(currentPage + 1);
-
-});
+  button.addEventListener('click',()=>{
+    showPage(currentPage + 1);
+  });
 
 });
 
-// Tombol kembali ke halaman awal
-
-document.getElementById('againBtn').addEventListener('click',()=>{
-
-showPage(0);
-
-});
 
 // ============================
-// ENVELOPE
+// ENVELOPE & START BUTTON
 // ============================
 
 const envelope = document.getElementById('envelope');
 
 function openEnvelope(){
-
-envelope.classList.add('open');
-
+  envelope.classList.add('open');
 }
 
 envelope.addEventListener('click',openEnvelope);
 
 document.getElementById('startBtn').addEventListener('click',async()=>{
 
-openEnvelope();
+  openEnvelope();
 
-await startMusic();
+  await startMusic();
 
-showPage(1);
+  showPage(1);
 
 });
+
 
 // ============================
 // SECRET LETTER + HEARTS
@@ -1099,116 +1080,79 @@ let heartsStarted = false;
 
 function showerHearts(){
 
-if(heartsStarted)return;
+  if(heartsStarted) return;
 
-heartsStarted = true;
+  heartsStarted = true;
 
-const layer = document.getElementById('heartsLayer');
+  const layer = document.getElementById('heartsLayer');
 
-layer.classList.add('show');
+  layer.classList.add('show');
 
-const symbols = ['♡','♥','ღ','💕','♡'];
+  const symbols = ['♡','♥','ღ','💕','♡'];
 
-for(let i=0;i<65;i++){
+  for(let i=0;i<65;i++){
 
-const heart = document.createElement('span');
+    const heart = document.createElement('span');
 
-heart.className = 'floating-heart';
+    heart.className = 'floating-heart';
 
-heart.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+    heart.textContent =
+      symbols[Math.floor(Math.random()*symbols.length)];
 
-heart.style.left = Math.random()*100+'%';
+    heart.style.left = Math.random()*100+'%';
 
-heart.style.fontSize = (18+Math.random()*27)+'px';
+    heart.style.fontSize = (18+Math.random()*27)+'px';
 
-heart.style.setProperty('--duration',(3.5+Math.random()*4)+'s');
+    heart.style.setProperty(
+      '--duration',
+      (3.5+Math.random()*4)+'s'
+    );
 
-heart.style.setProperty('--spin',(Math.random()*100-50)+'deg');
+    heart.style.setProperty(
+      '--spin',
+      (Math.random()*100-50)+'deg'
+    );
 
-heart.style.setProperty('--delay',(Math.random()*2.4)+'s');
+    heart.style.setProperty(
+      '--delay',
+      (Math.random()*2.4)+'s'
+    );
 
-layer.appendChild(heart);
+    layer.appendChild(heart);
 
-}
+  }
 
-document.getElementById('heartHint').textContent =
-'A little love, floating all the way to you. ♡';
+  document.getElementById('heartHint').textContent =
+    'A little love, floating all the way to you. ♡';
 
-setTimeout(()=>{
+  setTimeout(()=>{
 
-layer.classList.remove('show');
-layer.innerHTML = '';
-heartsStarted = false;
+    layer.classList.remove('show');
+    layer.innerHTML = '';
+    heartsStarted = false;
 
-},8500);
+  },8500);
 
 }
 
 document.getElementById('secretBtn').addEventListener('click',()=>{
 
-const secret = document.getElementById('secret');
+  const secret = document.getElementById('secret');
+  const button = document.getElementById('secretBtn');
 
-const button = document.getElementById('secretBtn');
+  const opened = !secret.classList.contains('show');
 
-const opened = !secret.classList.contains('show');
+  secret.classList.toggle('show');
 
-secret.classList.toggle('show');
+  button.textContent = opened
+    ? 'Close your secret'
+    : 'Open your secret ♡';
 
-button.textContent = opened
-? 'Close your secret'
-: 'Open your secret ♡';
-
-if(opened){
-
-showerHearts();
-
-}
+  if(opened){
+    showerHearts();
+  }
 
 });
-
-// ============================
-// BIRTHDAY COUNTDOWN
-// ============================
-
-const target = new Date('2026-11-24T00:00:00+07:00').getTime();
-
-function updateCountdown(){
-
-const diff = target - Date.now();
-
-if(diff <= 0){
-
-document.getElementById('countLabel').textContent =
-'Today is your day. Happy birthday, cuamiku! ♡';
-
-document.getElementById('countdown').innerHTML =
-'<div style="font-size:25px;font-style:italic;color:#a66f68">It’s your day! Make a wish. ✧</div>';
-
-return;
-
-}
-
-const d = Math.floor(diff/86400000);
-
-const h = Math.floor(diff%86400000/3600000);
-
-const m = Math.floor(diff%3600000/60000);
-
-const s = Math.floor(diff%60000/1000);
-
-document.getElementById('days').textContent = d;
-
-document.getElementById('hours').textContent = String(h).padStart(2,'0');
-
-document.getElementById('mins').textContent = String(m).padStart(2,'0');
-
-document.getElementById('secs').textContent = String(s).padStart(2,'0');
-
-}
-
-updateCountdown();
-
-setInterval(updateCountdown,1000);
 
 
 // ============================
@@ -1217,64 +1161,63 @@ setInterval(updateCountdown,1000);
 
 let balloonsCreated = false;
 
-function showBalloons() {
+function showBalloons(){
 
-if(balloonsCreated)return;
-balloonsCreated = true;
+  if(balloonsCreated) return;
 
-const colors = [
-'#d9a6a0',
-'#e9cdb0',
-'#c9ad9b',
-'#e7bfc0',
-'#bda58f',
-'#f0dfc9'
-];
+  balloonsCreated = true;
 
-const layer = document.createElement('div');
-layer.id = 'balloonsLayer';
-layer.classList.add('show');
+  const colors = [
+    '#d9a6a0',
+    '#e9cdb0',
+    '#c9ad9b',
+    '#e7bfc0',
+    '#bda58f',
+    '#f0dfc9'
+  ];
 
-document.body.appendChild(layer);
+  const layer = document.createElement('div');
 
-for(let i=0;i<20;i++){
+  layer.id = 'balloonsLayer';
+  layer.classList.add('show');
 
-const balloon = document.createElement('div');
+  document.body.appendChild(layer);
 
-balloon.className = 'balloon';
+  for(let i=0;i<20;i++){
 
-const color = colors[i % colors.length];
+    const balloon = document.createElement('div');
 
-balloon.style.setProperty('--balloon',color);
-balloon.style.background = color;
-balloon.style.left = Math.random()*100+'%';
-balloon.style.setProperty('--speed',(7+Math.random()*6)+'s');
-balloon.style.setProperty('--delay',(Math.random()*4)+'s');
+    balloon.className = 'balloon';
 
-layer.appendChild(balloon);
+    const color = colors[i % colors.length];
+
+    balloon.style.setProperty('--balloon',color);
+    balloon.style.background = color;
+    balloon.style.left = Math.random()*100+'%';
+
+    balloon.style.setProperty(
+      '--speed',
+      (7+Math.random()*6)+'s'
+    );
+
+    balloon.style.setProperty(
+      '--delay',
+      (Math.random()*4)+'s'
+    );
+
+    layer.appendChild(balloon);
+
+  }
+
+  setTimeout(()=>{
+
+    layer.remove();
+    balloonsCreated = false;
+
+  },16000);
 
 }
 
-setTimeout(()=>{
-layer.remove();
-balloonsCreated = false;
-},16000);
-
-}
-
-// Jalankan saat halaman terakhir dibuka
-
-const originalShowPage = showPage;
-
-showPage = function(index){
-
-originalShowPage(index);
-
-if(index === 6){
-showBalloons();
-}
-
-};
 
 // ============================
 // OPEN GIFT
@@ -1286,31 +1229,37 @@ const cakeArea = document.getElementById('cakeArea');
 
 function openGift(){
 
-if(giftArea.classList.contains('open'))return;
+  if(giftArea.classList.contains('open')) return;
 
-giftArea.classList.add('open');
+  giftArea.classList.add('open');
 
-giftCaption.textContent = 'A little birthday cake for you. ♡';
+  giftCaption.textContent =
+    'A little birthday cake for you. ♡';
 
-setTimeout(()=>{
+  setTimeout(()=>{
 
-giftArea.style.display = 'none';
-giftCaption.style.display = 'none';
+    giftArea.style.display = 'none';
+    giftCaption.style.display = 'none';
 
-cakeArea.classList.add('show');
+    cakeArea.classList.add('show');
 
-},850);
+  },850);
 
 }
 
 giftArea.addEventListener('click',openGift);
 
 giftArea.addEventListener('keydown',e=>{
-if(e.key === 'Enter' || e.key === ' '){
-e.preventDefault();
-openGift();
-}
+
+  if(e.key === 'Enter' || e.key === ' '){
+
+    e.preventDefault();
+    openGift();
+
+  }
+
 });
+
 
 // ============================
 // BLOW THE CANDLES
@@ -1318,26 +1267,27 @@ openGift();
 
 document.getElementById('blowBtn').addEventListener('click',()=>{
 
-const candle = document.getElementById('candle');
-const button = document.getElementById('blowBtn');
-const finalMessage = document.getElementById('finalMessage');
+  const candle = document.getElementById('candle');
+  const button = document.getElementById('blowBtn');
+  const finalMessage = document.getElementById('finalMessage');
 
-candle.classList.add('off');
+  candle.classList.add('off');
 
-button.style.display = 'none';
+  button.style.display = 'none';
 
-document.querySelector('.cake-message').textContent =
-'Wish made! ♡';
+  document.querySelector('.cake-message').textContent =
+    'Wish made! ♡';
 
-setTimeout(()=>{
+  setTimeout(()=>{
 
-finalMessage.classList.add('show');
+    finalMessage.classList.add('show');
 
-showConfetti();
+    showConfetti();
 
-},1000);
+  },1000);
 
 });
+
 
 // ============================
 // CONFETTI
@@ -1345,46 +1295,48 @@ showConfetti();
 
 function showConfetti(){
 
-const layer = document.createElement('div');
-layer.id = 'confettiLayer';
+  const layer = document.createElement('div');
 
-document.body.appendChild(layer);
+  layer.id = 'confettiLayer';
 
-const colors = [
-'#d9a6a0',
-'#e9cdb0',
-'#c9ad9b',
-'#bda58f',
-'#f0dfc9'
-];
+  document.body.appendChild(layer);
 
-for(let i=0;i<65;i++){
+  const colors = [
+    '#d9a6a0',
+    '#e9cdb0',
+    '#c9ad9b',
+    '#bda58f',
+    '#f0dfc9'
+  ];
 
-const piece = document.createElement('div');
+  for(let i=0;i<65;i++){
 
-piece.className = 'confetti';
+    const piece = document.createElement('div');
 
-piece.style.left = Math.random()*100+'%';
-piece.style.background = colors[i%colors.length];
+    piece.className = 'confetti';
 
-piece.style.setProperty(
-'--speed',
-(3+Math.random()*3)+'s'
-);
+    piece.style.left = Math.random()*100+'%';
 
-piece.style.animationDelay =
-Math.random()*1.5+'s';
+    piece.style.background = colors[i%colors.length];
 
-layer.appendChild(piece);
+    piece.style.setProperty(
+      '--speed',
+      (3+Math.random()*3)+'s'
+    );
+
+    piece.style.animationDelay =
+      Math.random()*1.5+'s';
+
+    layer.appendChild(piece);
+
+  }
+
+  setTimeout(()=>{
+    layer.remove();
+  },7000);
 
 }
 
-setTimeout(()=>{
-layer.remove();
-},7000);
-
-}
-  
 </script>
 
 </body>
