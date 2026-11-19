@@ -1032,7 +1032,7 @@ I love you, always.
 
 </div>
 
-<button class="btn primary" id="againBtn">
+<button class="btn primary" id="againBtn" style="display:none;">
   Read Again ♡
 </button>
    
@@ -1367,7 +1367,8 @@ document.getElementById('blowBtn').addEventListener('click',()=>{
     finalMessage.classList.add('show');
 
     showConfetti();
-
+document.getElementById('againBtn').style.display = 'inline-block';
+     
   },1000);
 
 });
