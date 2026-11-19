@@ -1103,6 +1103,9 @@ function showPage(index){
 
 document.getElementById('againBtn').addEventListener('click', () => {
   showPage(0);
+
+  // Tutup kembali amplop
+  envelope.classList.remove('open');
 });
    
   dots.forEach((dot,i)=>{
